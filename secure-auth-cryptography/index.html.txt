@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Project</title>
+</head>
+<body>
+
+<h2>Register</h2>
+<input id="u1" placeholder="username">
+<input id="p1" placeholder="password">
+<button onclick="register()">Register</button>
+
+<hr>
+
+<h2>Login</h2>
+<input id="u2" placeholder="username">
+<input id="p2" placeholder="password">
+<button onclick="login()">Login</button>
+
+<p id="token"></p>
+
+<hr>
+
+<h2>Send Message</h2>
+<input id="msg" placeholder="message">
+<button onclick="send()">Send</button>
+
+<pre id="out"></pre>
+
+<script>
+let token = "";
+
+function register(){
+    fetch("http://127.0.0.1:5000/register", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            username: u1.value,
+            password: p1.value
+        })
+    })
+    .then(r => r.json())
+    .then(d => alert(JSON.stringify(d)));
+}
+
+function login(){
+    fetch("http://127.0.0.1:5000/login", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            username: u2.value,
+            password: p2.value
+        })
+    })
+    .then(r => r.json())
+    .then(d => {
+        token = d.token;
+        document.getElementById("token").innerText = token;
+    });
+}
+
+function send(){
+    fetch("http://127.0.0.1:5000/send_message", {
+        method: "POST",
+        headers: {
+            "Content-Type":"application/json",
+            "Authorization":"Bearer " + token
+        },
+        body: JSON.stringify({
+            message: msg.value
+        })
+    })
+    .then(r => r.json())
+    .then(d => {
+        document.getElementById("out").innerText = JSON.stringify(d);
+    });
+}
+</script>
+
+</body>
+</html>
